@@ -111,14 +111,15 @@ bar_chart_galway.show()
 line_chart.show()
 scatter_plot.show()
 
-@app.route('/')
-def index():
-    return render_template(
-        'index.html',
-        bar_chart=bar_chart_html,
-        line_chart=line_chart_html,
-        scatter_chart=scatter_plot_html
-    )
 
-if __name__=='__main__':
-    app.run(host='0.0.0.0',port=5001,debug=False)
+
+app = Flask(__name__, template_folder='templates') # Flask constructor 
+
+@app.route("/")
+def home():
+ 
+    message = "Hello, Flask1!"
+    return render_template("index.html", message=message)
+
+if __name__ == "__main__":
+    app.run(host='127.0.0.1', port=5001)
