@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-
+import plotly.express as px
 # Read the CSV file
 df = pd.read_csv('Courseworkcode3.csv')
 
@@ -86,3 +86,95 @@ print(stats_dictionary)
 stats_df = pd.DataFrame(stats_dictionary).transpose()
 print("Statistics DataFrame:")
 print(stats_df)
+
+
+bar_chart_dublin = px.bar(
+    data,
+    x='Date',
+    y=data.columns[1],
+    title="Bar Chart: Date vs Co.Dublin Value",
+    labels={'Date': 'Date', data.columns[2]: 'Co.Dublin Value'}
+)
+
+bar_chart_galway = px.bar(
+    data,
+    x='Date',
+    y=data.columns[2],
+    title="Bar Chart: Date vs Co.Galway Value",
+    labels={'Date': 'Date', data.columns[3]: 'Co.Galway Value'}
+
+)
+
+bar_chart_kildare = px.bar(
+    data,
+    x='Date',
+    y=data.columns[3],
+    title="Bar Chart: Date vs Co.Kildare Value",
+    labels={'Date': 'Date', data.columns[3]: 'Co.Kildare Value'}
+
+)
+
+bar_chart_dublin_html = bar_chart_dublin.to_html(full_html=False, include_plotlyjs="cdn")
+bar_chart_galway_html = bar_chart_galway.to_html(full_html=False, include_plotlyjs="cdn")
+bar_chart_kildare_html = bar_chart_kildare.to_html(full_html=False, include_plotlyjs="cdn")
+
+
+data_long = data.melt(
+    id_vars=[data.columns[0]],
+    value_vars=[data.columns[1], data.columns[2], data.columns[3]],
+    var_name="Variable",
+    value_name="Value"
+)
+           
+line_chart = px.line(
+    data_long,
+    x='Date',
+    y='Value',
+    color="Variable",
+    title="Line Chart: Column 1 Vs Column 2",
+    labels={                 # Update the labels
+        'Date': "Date", 
+        'Value': "Values", 
+        'Variable': "Categories"
+    }
+)
+line_chart_html = line_chart.to_html(full_html=False, include_plotlyjs="cdn")
+
+data_long_scatter = data.melt(
+    id_vars=["Date"],
+    value_vars=[data.columns[1], data.columns[2], data.columns[3]],  # Make sure column 4 is Co.Kildare
+    var_name="County",
+    value_name="Value"
+)
+
+# Create scatter plot with different colors for Dublin, Galway, and Kildare
+scatter_plot = px.scatter(
+    data_long_scatter,
+    x='Date',
+    y='Value',
+    color='County',  # Color by County column
+    title="Scatter Plot: Dublin, Galway, and Kildare Values",
+    labels={'Date': 'Date', 'Value': 'Values', 'County': 'County'}
+)
+
+# Convert scatter plot to HTML
+scatter_plot_html = scatter_plot.to_html(full_html=False, include_plotlyjs="cdn")
+
+bar_chart_kildare.show()
+bar_chart_dublin.show()
+bar_chart_galway.show()
+line_chart.show()
+scatter_plot.show()
+
+
+
+app = Flask(__name__, template_folder='templates') # Flask constructor 
+
+@app.route("/")
+def home():
+ 
+    message = "Hello, Flask1!"
+    return render_template("index.html", message=message)
+
+if __name__ == "__main__":
+    app.run(host='127.0.0.1', port=5001)
