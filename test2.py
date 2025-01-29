@@ -159,6 +159,23 @@ scatter_plot = px.scatter(
 
 # Convert scatter plot to HTML
 scatter_plot_html = scatter_plot.to_html(full_html=False, include_plotlyjs="cdn")
+  
+# Extracting values for Dublin and Galway from the dataframe
+relationship_data = data[['Date', data.columns[1], data.columns[2]]].dropna()
+
+# Create a scatter plot for the relationship between Co.Dublin and Co.Galway
+relationship_plot = px.scatter(
+    relationship_data,
+    x=data.columns[1],  # Co.Dublin values
+    y=data.columns[2],  # Co.Galway values
+    title="Relationship between Co.Dublin and Co.Galway",
+    labels={data.columns[1]: 'Co.Dublin Value', data.columns[2]: 'Co.Galway Value'}
+)
+
+# Convert the plot to HTML to render in Flask template
+relationship_plot_html = relationship_plot.to_html(full_html=False, include_plotlyjs="cdn")
+
+
 """
 bar_chart_kildare.show()
 bar_chart_dublin.show()
@@ -166,6 +183,7 @@ bar_chart_galway.show()
 line_chart.show()
 scatter_plot.show()
 """
+relationship_plot.show()
 from flask import Flask, render_template
 
 app = Flask(__name__, template_folder='templates')
@@ -178,7 +196,8 @@ def home():
         bar_chart_dublin=bar_chart_dublin_html,
         bar_chart_galway=bar_chart_galway_html,
         line_chart=line_chart_html,
-        scatter_plot=scatter_plot_html
+        scatter_plot=scatter_plot_html,
+        relationship_plot=relationship_plot_html
     )
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5001)
