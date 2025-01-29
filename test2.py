@@ -159,22 +159,26 @@ scatter_plot = px.scatter(
 
 # Convert scatter plot to HTML
 scatter_plot_html = scatter_plot.to_html(full_html=False, include_plotlyjs="cdn")
-
+"""
 bar_chart_kildare.show()
 bar_chart_dublin.show()
 bar_chart_galway.show()
 line_chart.show()
 scatter_plot.show()
+"""
+from flask import Flask, render_template
 
-
-
-app = Flask(__name__, template_folder='templates') # Flask constructor 
-
+app = Flask(__name__, template_folder='templates')
 @app.route("/")
 def home():
- 
-    message = "Hello, Flask1!"
-    return render_template("index.html", message=message)
-
+    # Single variable to render
+     return render_template(
+        'index.html' ,
+        bar_chart_kildare=bar_chart_kildare_html,
+        bar_chart_dublin=bar_chart_dublin_html,
+        bar_chart_galway=bar_chart_galway_html,
+        line_chart=line_chart_html,
+        scatter_plot=scatter_plot_html
+    )
 if __name__ == "__main__":
     app.run(host='127.0.0.1', port=5001)
