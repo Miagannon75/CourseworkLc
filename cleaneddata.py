@@ -24,12 +24,12 @@ data_pivoted = data.pivot_table(index='month',
 data_pivoted.columns = [f"{col} pass rate" for col in data_pivoted.columns]
 data_pivoted.reset_index(inplace=True)
 data_pivoted['month'] = data_pivoted['month'].dt.strftime('%d-%m-%Y')
-data_pivoted.to_csv('cleaned_driving_test_pass_rate_pivoted.csv', index=False)
+data_pivoted.to_csv('cleaneddata.csv', index=False)
 
 numeric_cols = data_pivoted.columns[1:]  # All columns except 'Date' should be numeric
 #for col in numeric_cols:
     #data[col] = pd.to_numeric(data[col], errors='coerce')
-data = pd.read_csv('cleaned_driving_test_pass_rate_pivoted.csv')
+data = pd.read_csv('cleaneddata.csv')
 # Compute statistics for numeric columns
 stats_dictionary = {}
 
@@ -164,12 +164,11 @@ def index():
         scatter_plot_2=scatter_plot_2_html
     )
 
-# Route to handle form submission and store recommendations
-@app.route('/page2')
-def page2():
-    # Get user inputs from the form
-   return render_template(
-        'page2.html', )
 
+@app.route('/page2') 
+def page2():
+    
+   return render_template('page2.html', )
+        
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)
