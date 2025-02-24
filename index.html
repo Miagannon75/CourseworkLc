@@ -6,10 +6,13 @@
     <title>Flask Plotly Charts</title>
 </head>
 <body>
+
+     <h1>Welcome to the Homepage!</h1>
+    <a href="/page2">Go to Page 2</a>
     <h1>Charts</h1>
 
-    <h2>Co.Kildare Bar Chart</h2>
-    {{ bar_chart_kildare|safe }}
+    <h2>Co.Donegal Bar Chart</h2>
+    {{ bar_chart_donegal|safe }}
     
     <h2>Co.Dublin Bar Chart</h2>
     {{ bar_chart_dublin|safe }}
@@ -24,7 +27,8 @@
     {{ scatter_plot|safe }}
     
     <h2>Relationship Plot between Dublin and Galway</h2>
-    {{ relationship_plot|safe}}
+    {{ scatter_plot_2|safe}}
+    
     
 </body>
 </html>

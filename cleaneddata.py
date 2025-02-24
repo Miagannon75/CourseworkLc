@@ -138,13 +138,19 @@ scatter_plot_html = scatter_plot.to_html(full_html=False, include_plotlyjs="cdn"
 
 scatter_plot_2_html = scatter_plot_2.to_html(full_html=False, include_plotlyjs="cdn")
 
-
+"""
 bar_chart_dublin.show()
 bar_chart_galway.show()
 bar_chart_donegal.show()
 line_chart.show()
 scatter_plot.show()
 scatter_plot_2.show()
+"""
+
+from flask import Flask, render_template, request, redirect, url_for
+
+app = Flask(__name__)
+
 
 @app.route('/')
 def index():
@@ -158,6 +164,12 @@ def index():
         scatter_plot_2=scatter_plot_2_html
     )
 
+# Route to handle form submission and store recommendations
+@app.route('/page2')
+def page2():
+    # Get user inputs from the form
+   return render_template(
+        'page2.html', )
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)
-
