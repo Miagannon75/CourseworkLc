@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Data</title>
+</head>
+<body>
+    <h1>Enter Driving Test Data</h1>
+    <form id="dataForm">
+        <label for="county">County:</label>
+        <input type="text" id="county" name="county" required><br>
+
+        <label for="month">Month:</label>
+        <input type="text" id="month" name="month" placeholder="e.g., January 2025" required><br>
+
+        <label for="pass_rate">Pass Rate (%):</label>
+        <input type="text" id="pass_rate" name="pass_rate" required><br>
+
+        <button type="submit">Submit Data</button>
+    </form>
+
+    <h2>Submitted Data:</h2>
+    <ul id="dataList"></ul>
+
+    <script>
+        // JavaScript to handle form submission and display the submitted data
+
+        document.getElementById('dataForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent form from refreshing the page
+
+            const county = document.getElementById('county').value;
+            const month = document.getElementById('month').value;
+            const pass_rate = document.getElementById('pass_rate').value;
+
+            // Validate input data
+            if (!county || !month || isNaN(pass_rate) || pass_rate.trim() === "") {
+                alert("All fields are required and pass rate must be a number!");
+                return;
+            }
+
+            // Prepare the data to send
+            const formData = {
+                county: county,
+                month: month,
+                pass_rate: pass_rate
+            };
+
+            // Send the data to the Flask server using fetch
+            fetch('/submit_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Data submitted successfully!');
+                    loadData();  // Reload the data list
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+        });
+
+        // Function to load data from the backend
+        function loadData() {
+            fetch('/get_data')
+                .then(response => response.json())
+                .then(data => {
+                    const dataList = document.getElementById('dataList');
+                    dataList.innerHTML = '';  // Clear existing list
+                    data.forEach(entry => {
+                        const li = document.createElement('li');
+                        li.textContent = `${entry.county} - ${entry.month} - ${entry.pass_rate}%`;
+                        dataList.appendChild(li);
+                    });
+                });
+        }
+
+        // Load the data when the page loads
+        window.onload = loadData;
+    </script>
+</body>
+</html>

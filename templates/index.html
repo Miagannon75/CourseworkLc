@@ -3,9 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App</title>
+    <title>Flask Plotly Charts</title>
 </head>
 <body>
-    <h1>{{ message }}</h1> <!-- Renders the 'message' variable -->    
+
+     <h1>Welcome to the Homepage!</h1>
+     <a href="/data_form">Submit Data</a>
+    <a href="/summary">View Summary</a>
+    <h1>Charts</h1>
+    
+    <h2>Co.Donegal Bar Chart</h2>
+    {{ bar_chart_donegal|safe }}
+    
+    <h2>Co.Dublin Bar Chart</h2>
+    {{ bar_chart_dublin|safe }}
+    
+    <h2>Co.Galway Bar Chart</h2>
+    {{ bar_chart_galway|safe }}
+    
+    <h2>Line Chart</h2>
+    {{ line_chart|safe }}
+    
+    <h2>Scatter Plot</h2>
+    {{ scatter_plot|safe }}
+    
+    <h2>Relationship Plot between Dublin and Galway</h2>
+    {{ scatter_plot_2|safe}}
+    
+    
 </body>
 </html>

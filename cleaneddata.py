@@ -147,10 +147,11 @@ scatter_plot.show()
 scatter_plot_2.show()
 """
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
+suggestions_list = []
 
 @app.route('/')
 def index():
@@ -163,12 +164,45 @@ def index():
         scatter_plot=scatter_plot_html,
         scatter_plot_2=scatter_plot_2_html
     )
+@app.route('/data_form', methods=['GET', 'POST'])
+def data_form():
+    if request.method == 'POST':
+        # Get the data from the form
+        county = request.form.get('county')
+        month = request.form.get('month')
+        pass_rate = request.form.get('pass_rate')
+
+        # Validate the data
+        if county and month and pass_rate:
+            # Store the data
+            data_collection.append({
+                'county': county,
+                'month': month,
+                'pass_rate': pass_rate
+            })
+            return jsonify({"status": "success", "message": "Data added successfully!"})
+        else:
+            return jsonify({"status": "error", "message": "All fields are required!"})
+
+    return render_template('data_form.html')
+
+# Route to get the collected data (GET)
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    return jsonify(data_collection)
+
+# Route to show summarized data (summary page)
+@app.route('/summary', methods=['GET'])
+def summary():
+    return render_template('summary.html', data=data_collection)
+
+    df = pd.DataFrame(data_collection)
+    if not df.empty:
+        summary_data = df.groupby(['county', 'month']).agg({'pass_rate': ['mean', 'count']}).reset_index()
+    else:
+        summary_data = None
+    return render_template('summary.html', summary_data=summary_data)
 
 
-@app.route('/page2') 
-def page2():
-    
-   return render_template('page2.html', )
-        
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)
