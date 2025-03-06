@@ -26,16 +26,14 @@ data_pivoted.reset_index(inplace=True)
 data_pivoted['month'] = data_pivoted['month'].dt.strftime('%d-%m-%Y')
 data_pivoted.to_csv('cleaneddata.csv', index=False)
 
-numeric_cols = data_pivoted.columns[1:]  # All columns except 'Date' should be numeric
-#for col in numeric_cols:
-    #data[col] = pd.to_numeric(data[col], errors='coerce')
+numeric_cols = data_pivoted.columns[1:]  
 data = pd.read_csv('cleaneddata.csv')
-# Compute statistics for numeric columns
+
 stats_dictionary = {}
 
 
 for col in numeric_cols:
-    stats_data = data_pivoted[col].dropna()  # Drop NA values for stats calculations
+    stats_data = data_pivoted[col].dropna()
     stats_dictionary[col] = {
         'Mean': stats_data.mean(),
         'Median': stats_data.median(),
@@ -43,19 +41,15 @@ for col in numeric_cols:
         'Range': stats_data.max() - stats_data.min()
     }
 
-#print("Statistics Dictionary:")
-#print(stats_dictionary)
 
 stats_df = pd.DataFrame(stats_dictionary).T
 
-# Write the stats DataFrame to a CSV file
+
 stats_df.to_csv('driving_test_pass_rate_statistics.csv', index=True)
 
-# Print the statistics DataFrame for verification
 print("Statistics DataFrame:")
 print(stats_df)
 
-# Create DataFrame from the stats dictionary
 bar_chart_dublin = px.bar(
     data_pivoted,
     x='month',
@@ -99,7 +93,7 @@ line_chart = px.line(
     y='Value',
     color="Variable",
     title="Line Chart: Column 1 Vs Column 2",
-    labels={                 # Update the labels
+    labels={                
         'month': "month", 
         'Value': "pass rates", 
         'Variable': "Counties" 
@@ -112,13 +106,16 @@ scatter_plot = px.scatter(
     x='Co. Dublin pass rate',
     y='Co. Galway pass rate',
     title="Dublin vs Galway pass rates",
-    labels={data.columns[3]: "Values"}
+    labels={
+        'Co. dublin pass rate': "Dublin Pass Rate", 
+        'Co. galway pass rate': "Galway Pass Rate"
+    }
 )
 scatter_plot_html = scatter_plot.to_html(full_html=False, include_plotlyjs="cdn")
 
 data_long_scatter = data.melt(
     id_vars=["month"],
-    value_vars=[data.columns[1], data.columns[2], data.columns[3]],  # Make sure column 4 is Co.Kildare
+    value_vars=[data.columns[1], data.columns[2], data.columns[3]],  
     var_name="County",
     value_name="Value"
 )
@@ -127,12 +124,12 @@ scatter_plot_2 = px.scatter(
     data_long_scatter,
     x='month',
     y='Value',
-    color='County',  # Color by County column
+    color='County', 
     title="Scatter Plot: Dublin, Galway, and Donegal Values",
     labels={'month': 'Month', 'Value': 'Values', 'County': 'County'}
 )
 
-# Convert scatter plot to HTML
+
 scatter_plot_html = scatter_plot.to_html(full_html=False, include_plotlyjs="cdn")
 
 
@@ -151,8 +148,6 @@ from flask import Flask, render_template, jsonify, request
 
 app = Flask(__name__)
 
-suggestions_list = []
-
 @app.route('/')
 def index():
     return render_template(
@@ -164,45 +159,9 @@ def index():
         scatter_plot=scatter_plot_html,
         scatter_plot_2=scatter_plot_2_html
     )
-@app.route('/data_form', methods=['GET', 'POST'])
-def data_form():
-    if request.method == 'POST':
-        # Get the data from the form
-        county = request.form.get('county')
-        month = request.form.get('month')
-        pass_rate = request.form.get('pass_rate')
-
-        # Validate the data
-        if county and month and pass_rate:
-            # Store the data
-            data_collection.append({
-                'county': county,
-                'month': month,
-                'pass_rate': pass_rate
-            })
-            return jsonify({"status": "success", "message": "Data added successfully!"})
-        else:
-            return jsonify({"status": "error", "message": "All fields are required!"})
-
-    return render_template('data_form.html')
-
-# Route to get the collected data (GET)
-@app.route('/get_data', methods=['GET'])
-def get_data():
-    return jsonify(data_collection)
-
-# Route to show summarized data (summary page)
-@app.route('/summary', methods=['GET'])
-def summary():
-    return render_template('summary.html', data=data_collection)
-
-    df = pd.DataFrame(data_collection)
-    if not df.empty:
-        summary_data = df.groupby(['county', 'month']).agg({'pass_rate': ['mean', 'count']}).reset_index()
-    else:
-        summary_data = None
-    return render_template('summary.html', summary_data=summary_data)
-
+@app.route('/page2')
+def page2():
+    return render_template('page2.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=False)
